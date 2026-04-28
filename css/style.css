@@ -1,0 +1,240 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: "JetBrains Mono", "D2Coding", "Consolas", "Courier New", monospace;
+  color: #cfeae0;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+#game {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+#map-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  /* 미세한 글로우 vignette */
+  background:
+    radial-gradient(ellipse at center, rgba(0,28,40,0.0) 30%, rgba(0,0,0,0.55) 100%),
+    #000408;
+}
+#map-canvas:active { cursor: grabbing; }
+
+/* ─── 스캔라인 + 노이즈 오버레이 ────────────────────── */
+#game::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 230, 220, 0.03) 0px,
+      rgba(0, 230, 220, 0.03) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  mix-blend-mode: screen;
+  opacity: 0.6;
+}
+
+/* 코너 브래킷 4개 — 작전화면 chrome */
+#game::after {
+  content: '';
+  position: absolute;
+  inset: 16px;
+  pointer-events: none;
+  z-index: 6;
+  background:
+    /* TL */
+    linear-gradient(to right, rgba(120, 240, 230, 0.85) 0 20px, transparent 20px) top left / 20px 1px no-repeat,
+    linear-gradient(to bottom, rgba(120, 240, 230, 0.85) 0 20px, transparent 20px) top left / 1px 20px no-repeat,
+    /* TR */
+    linear-gradient(to left, rgba(120, 240, 230, 0.85) 0 20px, transparent 20px) top right / 20px 1px no-repeat,
+    linear-gradient(to bottom, rgba(120, 240, 230, 0.85) 0 20px, transparent 20px) top right / 1px 20px no-repeat,
+    /* BL */
+    linear-gradient(to right, rgba(120, 240, 230, 0.85) 0 20px, transparent 20px) bottom left / 20px 1px no-repeat,
+    linear-gradient(to top, rgba(120, 240, 230, 0.85) 0 20px, transparent 20px) bottom left / 1px 20px no-repeat,
+    /* BR */
+    linear-gradient(to left, rgba(120, 240, 230, 0.85) 0 20px, transparent 20px) bottom right / 20px 1px no-repeat,
+    linear-gradient(to top, rgba(120, 240, 230, 0.85) 0 20px, transparent 20px) bottom right / 1px 20px no-repeat;
+  filter: drop-shadow(0 0 4px rgba(120, 240, 230, 0.6));
+}
+
+/* ─── HUD 블록 ─────────────────────────────────────── */
+.hud-block {
+  background: rgba(0, 16, 22, 0.78);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(120, 240, 230, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.4) inset,
+    0 0 12px rgba(0, 230, 220, 0.15);
+  padding: 10px 14px;
+  font-size: 11px;
+  line-height: 1.55;
+  pointer-events: none;
+  min-width: 220px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  z-index: 10;
+  position: relative;
+}
+.hud-block::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(120, 240, 230, 0.08);
+  pointer-events: none;
+}
+.hud-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.hud-label {
+  color: rgba(120, 200, 200, 0.65);
+}
+#status-text {
+  color: #aaffe0;
+  text-shadow: 0 0 6px rgba(120, 240, 230, 0.6);
+}
+#zoom-text, #coord-text {
+  color: #d8f6ee;
+}
+
+#hud-top    { position: absolute; top: 32px; left: 32px; z-index: 10; }
+#hud-bottom { position: absolute; bottom: 32px; left: 32px; z-index: 10; display: flex; flex-direction: column; gap: 8px; max-width: 320px; }
+#hud-bottom .hud-block { min-width: 220px; }
+
+#city-panel #city-name { color: #ffe89c; text-shadow: 0 0 6px rgba(255, 220, 100, 0.6); }
+#pyramid-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(120, 240, 230, 0.20);
+}
+.pyramid-profile {
+  font-size: 9px;
+  color: rgba(180, 220, 220, 0.65);
+  text-align: center;
+  margin-top: 4px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+#exchange-list {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(120, 240, 230, 0.18);
+  font-size: 10px;
+  line-height: 1.5;
+}
+.exchange-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 0;
+}
+.ex-name { color: rgba(220, 245, 240, 0.95); }
+.ex-meta { color: rgba(255, 140, 150, 0.85); }
+.exchange-more {
+  color: rgba(140, 200, 200, 0.6);
+  font-style: italic;
+  margin-top: 4px;
+}
+#hover-text {
+  color: rgba(200, 240, 235, 0.95);
+  font-size: 11px;
+}
+
+/* ─── 범례 ─────────────────────────────────────────── */
+#legend {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  background: rgba(0, 16, 22, 0.78);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(120, 240, 230, 0.35);
+  box-shadow: 0 0 12px rgba(0, 230, 220, 0.15);
+  padding: 10px 14px;
+  font-size: 10px;
+  pointer-events: none;
+  z-index: 10;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.legend-title {
+  color: rgba(120, 200, 200, 0.7);
+  margin-bottom: 6px;
+  font-size: 9px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.8;
+  color: rgba(200, 240, 235, 0.9);
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 6px currentColor;
+}
+.tier-M { background: #ff44aa; color: #ff44aa; }
+.tier-S { background: #fff5b0; color: #fff5b0; }
+.tier-A { background: #ffd070; color: #ffd070; }
+.tier-B { background: #ffb850; color: #ffb850; }
+.tier-C { background: #79e0d8; color: #79e0d8; }
+.tier-D { background: #6fd9a3; color: #6fd9a3; }
+.tier-E { background: #b39df0; color: #b39df0; }
+.ter-sea       { background: #1a3a82; color: #1a3a82; }
+.ter-land      { background: #1ad0c0; color: #1ad0c0; }
+.ter-mountain  { background: #a0fae0; color: #a0fae0; }
+.ter-river     { background: #8cdcff; color: #8cdcff; }
+
+/* ─── 로더 ─────────────────────────────────────────── */
+#loader {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: #000408;
+  z-index: 100;
+}
+#loader.loader-visible { display: flex; }
+.loader-box {
+  text-align: center;
+  border: 1px solid rgba(120, 240, 230, 0.5);
+  padding: 32px 56px;
+  background: rgba(0, 18, 28, 0.9);
+  box-shadow: 0 0 20px rgba(0, 230, 220, 0.25);
+}
+.loader-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  color: #aaffe0;
+  text-shadow: 0 0 10px rgba(120, 240, 230, 0.8);
+  margin-bottom: 14px;
+}
+.loader-msg {
+  color: rgba(200, 240, 235, 0.85);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}

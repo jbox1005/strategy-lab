@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>전략랩 — 지구 시뮬레이션</title>
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon.svg" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#04161c" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="전략랩" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="game">
+    <canvas id="map-canvas"></canvas>
+
+    <div id="hud-top">
+      <div class="hud-block">
+        <div class="hud-row"><span class="hud-label">상태</span><span id="status-text">초기화 중…</span></div>
+        <div class="hud-row"><span class="hud-label">줌</span><span id="zoom-text">1.00x</span></div>
+        <div class="hud-row"><span class="hud-label">위치</span><span id="coord-text">—</span></div>
+      </div>
+    </div>
+
+    <div id="hud-bottom">
+      <div class="hud-block">
+        <div class="hud-row"><span id="hover-text">육각 셀 위에 마우스를 올려보세요</span></div>
+      </div>
+      <div class="hud-block" id="city-panel" style="display:none;">
+        <div class="hud-row"><span class="hud-label">선택 도시</span><span id="city-name">—</span></div>
+        <div class="hud-row"><span class="hud-label">국가내 순위</span><span id="city-rank">—</span></div>
+        <div class="hud-row"><span class="hud-label">인구</span><span id="city-pop">—</span></div>
+        <div class="hud-row"><span class="hud-label">건설영역</span><span id="city-territory">—</span></div>
+        <div class="hud-row"><span class="hud-label">경제인구</span><span id="city-econ">—</span></div>
+        <div class="hud-row"><span class="hud-label">이동인구</span><span id="city-mobile">—</span></div>
+        <div class="hud-row"><span class="hud-label">징집가능</span><span id="city-draft">—</span></div>
+        <canvas id="pyramid-canvas" width="280" height="200"></canvas>
+        <div id="pyramid-profile" class="pyramid-profile">—</div>
+        <div class="hud-row" style="margin-top:8px"><span class="hud-label">교류</span><span id="city-exchanges">—</span></div>
+        <div id="exchange-list"></div>
+      </div>
+    </div>
+
+    <div id="legend">
+      <div class="legend-title">도시 등급</div>
+      <div class="legend-item"><span class="dot tier-M"></span>M · 1억+</div>
+      <div class="legend-item"><span class="dot tier-S"></span>S · 1000만+</div>
+      <div class="legend-item"><span class="dot tier-A"></span>A · 500만+</div>
+      <div class="legend-item"><span class="dot tier-B"></span>B · 100만+</div>
+      <div class="legend-item"><span class="dot tier-C"></span>C · 50만+</div>
+      <div class="legend-item"><span class="dot tier-D"></span>D · 10만+</div>
+      <div class="legend-item"><span class="dot tier-E"></span>E · 5만+</div>
+      <div class="legend-title" style="margin-top:8px">지형</div>
+      <div class="legend-item"><span class="dot ter-sea"></span>바다</div>
+      <div class="legend-item"><span class="dot ter-land"></span>육지</div>
+    </div>
+
+    <div id="loader" class="loader-visible">
+      <div class="loader-box">
+        <div class="loader-title">전략랩</div>
+        <div class="loader-msg" id="loader-msg">지구 데이터 로딩 중…</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+  <script>
+    // ─── 서비스워커 등록 (PWA) ────────────────────────
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => {
+          console.warn('[pwa] SW 등록 실패:', err.message);
+        });
+      });
+    }
+  </script>
+</body>
+</html>

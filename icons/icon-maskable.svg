@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- maskable: 안전 영역(중심 80%)에 컨텐츠가 들어가야 함. 배경은 가장자리까지. -->
+  <rect width="512" height="512" fill="#000408"/>
+
+  <!-- 메인 헥스 -->
+  <polygon points="200,200 312,200 360,288 312,376 200,376 152,288"
+           fill="rgba(20,180,180,0.20)"
+           stroke="rgba(140,245,235,0.95)"
+           stroke-width="8"/>
+
+  <!-- 도시 점 -->
+  <circle cx="256" cy="288" r="18" fill="#fff5b0"/>
+  <circle cx="256" cy="288" r="30" fill="none" stroke="rgba(255,220,100,0.9)" stroke-width="4"/>
+</svg>

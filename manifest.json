@@ -1,0 +1,26 @@
+{
+  "name": "전략랩 — 지구 시뮬레이션",
+  "short_name": "전략랩",
+  "description": "지구 기반 턴제 전략 시뮬레이션 게임",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#000408",
+  "theme_color": "#04161c",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
