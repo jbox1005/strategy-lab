@@ -1,7 +1,7 @@
 // 전략랩 PWA 서비스워커
 // 전략: cache-first (로컬 자산), 그리고 CDN 자산은 런타임 캐시 (offline 대비)
 
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CACHE_STATIC = `strategy-lab-static-${VERSION}`;
 const CACHE_RUNTIME = `strategy-lab-runtime-${VERSION}`;
 
